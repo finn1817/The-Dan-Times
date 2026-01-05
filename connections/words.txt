@@ -1,0 +1,2 @@
+Additional word bank for future puzzle generation (optional)
+Currently using hardcoded puzzles in categories.js

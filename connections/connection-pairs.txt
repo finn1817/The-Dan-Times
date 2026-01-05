@@ -1,0 +1,8 @@
+This file can be used to store additional puzzle data or game metadata.
+Currently, puzzles are defined in categories.js for easier management.
+
+You can add more puzzles to categories.js following the same format:
+- 4 categories per puzzle
+- 4 words per category
+- Difficulty levels 1-4
+- Creative category names with connections
