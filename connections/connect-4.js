@@ -482,7 +482,7 @@ const connectionPuzzles = {
                 },
                 {
                     name: "WORDS BEFORE 'CAST'",
-                    words: ["BROAD", "FORE", "OVER", "TYPE"],
+                    words: ["BROAD", "FORE", "OVER", "OUT"],
                     difficulty: 4
                 }
             ]
