@@ -9,16 +9,20 @@
 
         :root {
             --bg-color: #ffffff;
-            --board-bg-beige: #e6dace;
+            --board-bg-beige: #e6dace; /* The distinct beige background of the board track */
             --slot-empty: rgba(0,0,0,0.05);
             --domino-white: #fdfdfd;
             --pip-black: #1a1a1a;
+            
+            /* Region Colors (from your image) */
             --reg-purple: #a881af;
             --reg-pink: #ea9ab2;
             --reg-teal: #8fb6b5;
             --reg-orange: #eeb786;
             --reg-blue: #8fa1b3;
             --reg-blue-tag: #1c3a5e;
+            
+            /* UI Colors */
             --btn-black: #121212;
             --shadow-subtle: 0 4px 12px rgba(0,0,0,0.15);
         }
@@ -47,21 +51,24 @@
             margin-bottom: 30px;
         }
 
+        /* --- THE BOARD AREA --- */
         #game-area {
             position: relative;
             width: 360px;
-            height: 480px;
+            height: 480px; /* Adjusted for the specific shape */
             margin-bottom: 20px;
+            /* Centering content */
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
+        /* The Grid: We use absolute positioning for cells to handle irregular shapes perfectly */
         .board-layer {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            pointer-events: none;
+            pointer-events: none; /* Let clicks pass through to slots */
         }
 
         .cell-bg {
@@ -69,10 +76,12 @@
             width: 76px;
             height: 76px;
             border-radius: 8px;
-            background-color: var(--board-bg-beige);
+            /* The beige track color */
+            background-color: var(--board-bg-beige); 
             z-index: 0;
         }
 
+        /* Colored Regions (The dashed overlays) */
         .region {
             position: absolute;
             border: 2px dashed;
@@ -81,32 +90,40 @@
             border-radius: 12px;
             opacity: 0.9;
         }
+        
+        /* Region specific styles */
         .reg-purple { background-color: var(--reg-purple); border-color: #7a5080; }
         .reg-pink   { background-color: var(--reg-pink);   border-color: #c96e85; }
         .reg-teal   { background-color: var(--reg-teal);   border-color: #5f8080; }
         .reg-orange { background-color: var(--reg-orange); border-color: #b88250; }
         .reg-blue   { background-color: var(--reg-blue);   border-color: #1c3a5e; }
 
+        /* The Slots (Where dominoes actually drop) */
         #slots-layer {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 5;
+            z-index: 5; /* Above regions */
         }
 
         .slot {
             position: absolute;
             border-radius: 10px;
+            /* visual debugging: border: 1px solid red; */
             transition: transform 0.2s;
             cursor: pointer;
         }
+        /* Vertical Slot */
         .slot[data-orient="v"] { width: 72px; height: 154px; }
+        /* Horizontal Slot */
         .slot[data-orient="h"] { width: 154px; height: 72px; }
+
         .slot.hovered {
             background-color: rgba(0,0,0,0.1);
             transform: scale(1.02);
         }
 
+        /* --- TAGS (The visual rules) --- */
         .tag {
             position: absolute;
             z-index: 20;
@@ -118,22 +135,27 @@
             font-size: 1.1rem;
             filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.3));
         }
+        
+        /* Custom Shapes for Tags */
         .tag-diamond {
             width: 40px; height: 40px;
             transform: rotate(45deg);
             border-radius: 6px;
         }
         .tag-diamond span { transform: rotate(-45deg); }
+
         .tag-round {
             width: 44px; height: 34px;
             border-radius: 12px;
         }
+
         .tag-pentagon {
             width: 44px; height: 44px;
             clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
             display: flex; justify-content: center; align-items: center; padding-top: 5px;
         }
 
+        /* --- DOMINOES --- */
         .domino {
             width: 70px;
             height: 150px;
@@ -149,6 +171,7 @@
             position: relative;
         }
         .domino:active { cursor: grabbing; transform: scale(1.05); box-shadow: 0 2px 0 #ccc; }
+        
         .domino[data-orient="h"] {
             width: 150px; height: 70px;
             flex-direction: row;
@@ -161,6 +184,8 @@
             justify-content: center;
             align-items: center;
         }
+        
+        /* The dividing line */
         .domino::after {
             content: "";
             position: absolute;
@@ -173,6 +198,7 @@
             left: 50%; top: 10px; bottom: 10px; width: 2px;
         }
 
+        /* Dots */
         .pip-grid {
             display: grid;
             grid-template-columns: repeat(3, 12px);
@@ -186,6 +212,8 @@
             visibility: hidden;
             box-shadow: inset 0 1px 2px rgba(255,255,255,0.3);
         }
+
+        /* Dot Layouts */
         .v1 .d5 { visibility: visible; }
         .v2 .d1, .v2 .d9 { visibility: visible; }
         .v3 .d1, .v3 .d5, .v3 .d9 { visibility: visible; }
@@ -193,6 +221,7 @@
         .v5 .d1, .v5 .d3, .v5 .d5, .v5 .d7, .v5 .d9 { visibility: visible; }
         .v6 .d1, .v6 .d3, .v6 .d4, .v6 .d6, .v6 .d7, .v6 .d9 { visibility: visible; }
 
+        /* --- TRAY --- */
         #tray {
             width: 90%;
             max-width: 600px;
@@ -206,6 +235,7 @@
             flex-wrap: wrap;
         }
 
+        /* --- CONTROLS --- */
         #controls {
             margin-top: 20px;
             display: flex;
@@ -224,10 +254,12 @@
         .btn-reset { background-color: #ddd; color: #333; }
         .btn:hover { opacity: 0.85; }
 
-        .check-mark,.error-x {
+        /* --- OVERLAYS --- */
+        .check-mark {
             position: absolute;
             font-size: 2rem;
             color: white;
+            background: #4caf50;
             border-radius: 50%;
             width: 40px; height: 40px;
             display: none;
@@ -236,8 +268,21 @@
             z-index: 50;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-        .check-mark { background: #4caf50; }
-        .error-x { background: #d93025; }
+
+        .error-x {
+            position: absolute;
+            font-size: 2rem;
+            color: white;
+            background: #d93025;
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
     </style>
 </head>
 <body>
@@ -247,9 +292,13 @@
 
     <div id="game-area">
         <div id="board-bg-layer" class="board-layer"></div>
+        
         <div id="regions-layer" class="board-layer"></div>
+        
         <div id="tags-layer" class="board-layer"></div>
+
         <div id="slots-layer"></div>
+
         <div id="feedback-layer" class="board-layer" style="z-index: 60; pointer-events: none;"></div>
     </div>
 
@@ -261,71 +310,87 @@
     </div>
 
 <script>
-    const CELL = 80;
-    const PAD = 4;
-
+    // --- DATA ---
+    
+    // Cell Size
+    const CELL = 80; 
+    const PAD = 4; // Gap between cells visually
+    
+    // The specific board shape from your image
+    // Coordinates are (col, row)
+    // 0,0 is top left.
     const BOARD_SHAPE = [
-        {x:0, y:0}, {x:1, y:0}, {x:2, y:0},
-        {x:0, y:1}, {x:1, y:1}, {x:2, y:1},
-                    {x:2, y:2},
-        {x:0, y:3}, {x:1, y:3}, {x:2, y:3}
+        {x:0, y:0}, {x:1, y:0}, {x:2, y:0}, // Row 0
+        {x:0, y:1}, {x:1, y:1}, {x:2, y:1}, // Row 1
+                    {x:2, y:2}, // Row 2 (Narrow neck)
+        {x:0, y:3}, {x:1, y:3}, {x:2, y:3}  // Row 3 (Bottom block)
     ];
 
+    // The Logic Regions (Colors & Rules)
+    // Based on image_f20005.png
     const REGIONS = [
         {
             id: 'purple',
             colorClass: 'reg-purple',
-            cells: [{x:0, y:0}],
+            cells: [{x:0, y:0}], // Top Left single
             rule: { type: 'sum', val: 6 },
-            tag: { type: 'diamond', color: '#8e5c9b', text: '6', pos: {x: 40, y: 50} }
+            tag: { type: 'diamond', color: '#8e5c9b', text: '6', pos: {x: 40, y: 50} } // Offset from cell
         },
         {
             id: 'pink',
             colorClass: 'reg-pink',
-            cells: [{x:1, y:0}, {x:1, y:1}],
+            cells: [{x:1, y:0}, {x:1, y:1}], // Vertical middle top
             rule: { type: 'equal' },
+            // FIXED POS: Moved from {x:100, y:130} to {x:60, y:60} based on user feedback
             tag: { type: 'pentagon', color: '#d63384', text: '=', pos: {x: 60, y: 60} }
         },
         {
             id: 'teal',
             colorClass: 'reg-teal',
-            cells: [{x:2, y:0}],
-            rule: { type: 'gt', val: 3 },
+            cells: [{x:2, y:0}], // Top Right single
+            rule: { type: 'gt', val: 3 }, // > 3
             tag: { type: 'round', color: '#007ca5', text: '>3', pos: {x: 40, y: 50} }
         },
         {
             id: 'orange',
             colorClass: 'reg-orange',
-            cells: [{x:2, y:1}, {x:2, y:2}],
+            cells: [{x:2, y:1}, {x:2, y:2}], // Vertical right
             rule: { type: 'sum', val: 12 },
             tag: { type: 'diamond', color: '#d95e00', text: '12', pos: {x: 50, y: 130} }
         },
         {
             id: 'blue',
             colorClass: 'reg-blue',
-            cells: [{x:1, y:3}, {x:2, y:3}],
+            cells: [{x:1, y:3}, {x:2, y:3}], // Bottom horizontal
             rule: { type: 'sum', val: 11 },
             tag: { type: 'pentagon', color: '#112e51', text: '11', pos: {x: 130, y: 50} }
         }
     ];
 
+    // The Slots (Where dominoes fit)
+    // This is the "hidden" logic of the board layout.
+    // Slots connect 2 cells.
     const SLOTS = [
-        { id: 's1', c1: {x:0, y:0}, c2: {x:0, y:1}, orient: 'v' },
-        { id: 's2', c1: {x:1, y:0}, c2: {x:1, y:1}, orient: 'v' },
-        { id: 's3', c1: {x:2, y:0}, c2: {x:2, y:1}, orient: 'v' },
-        { id: 's4', c1: {x:2, y:2}, c2: {x:2, y:3}, orient: 'v' },
-        { id: 's5', c1: {x:0, y:3}, c2: {x:1, y:3}, orient: 'h' }
+        { id: 's1', c1: {x:0, y:0}, c2: {x:0, y:1}, orient: 'v' }, // Left Col (Purple + Beige)
+        { id: 's2', c1: {x:1, y:0}, c2: {x:1, y:1}, orient: 'v' }, // Mid Col (Pink)
+        { id: 's3', c1: {x:2, y:0}, c2: {x:2, y:1}, orient: 'v' }, // Right Top (Teal + Orange Top)
+        { id: 's4', c1: {x:2, y:2}, c2: {x:2, y:3}, orient: 'v' }, // Right Bot (Orange Bot + Blue Right)
+        { id: 's5', c1: {x:0, y:3}, c2: {x:1, y:3}, orient: 'h' }  // Bot Left (Beige + Blue Left)
     ];
 
+    // The Dominoes (From the screenshot)
     const DOMINOES = [
         { id: 'd1', v1: 6, v2: 6 },
         { id: 'd2', v1: 1, v2: 5 },
         { id: 'd3', v1: 6, v2: 4 },
         { id: 'd4', v1: 6, v2: 2 },
-        { id: 'd5', v1: 2, v2: 0 }
+        { id: 'd5', v1: 2, v2: 0 } // Blank is 0
     ];
 
-    let placedDominoes = {};
+    // State
+    let placedDominoes = {}; // slotId -> {domId, v1, v2}
+
+    // --- RENDERERS ---
 
     function init() {
         renderBoardBg();
@@ -351,33 +416,40 @@
         const fbLayer = document.getElementById('feedback-layer');
 
         REGIONS.forEach(reg => {
+            // Draw Region Box
+            // We need to find bounding box of cells
             const minX = Math.min(...reg.cells.map(c=>c.x));
             const minY = Math.min(...reg.cells.map(c=>c.y));
             const maxX = Math.max(...reg.cells.map(c=>c.x));
             const maxY = Math.max(...reg.cells.map(c=>c.y));
-            const w = (maxX - minX + 1) * CELL - 4;
+            
+            const w = (maxX - minX + 1) * CELL - 4; // -4 for visual margin
             const h = (maxY - minY + 1) * CELL - 4;
 
             const div = document.createElement('div');
             div.className = `region ${reg.colorClass}`;
             div.style.left = (minX * CELL + 2) + 'px';
             div.style.top = (minY * CELL + 2) + 'px';
-            div.style.width = (w - 4) + 'px';
+            div.style.width = (w - 4) + 'px'; // adjust for borders
             div.style.height = (h - 4) + 'px';
             regLayer.appendChild(div);
 
+            // Draw Tag
             if (reg.tag) {
                 const tag = document.createElement('div');
                 tag.className = `tag tag-${reg.tag.type}`;
                 tag.style.backgroundColor = reg.tag.color;
+                
+                // Position relative to Region Top-Left
                 tag.style.left = ((minX * CELL) + reg.tag.pos.x) + 'px';
                 tag.style.top = ((minY * CELL) + reg.tag.pos.y) + 'px';
-
+                
                 const span = document.createElement('span');
                 span.innerText = reg.tag.text;
                 tag.appendChild(span);
                 tagLayer.appendChild(tag);
-
+                
+                // Add Check/X mark placeholder near tag
                 const check = document.createElement('div');
                 check.className = 'check-mark';
                 check.innerHTML = '✓';
@@ -405,12 +477,14 @@
             div.className = 'slot';
             div.dataset.id = slot.id;
             div.dataset.orient = slot.orient;
+            
+            // Calculate Top/Left based on c1 (top/left-most cell)
             div.style.left = (slot.c1.x * CELL + 4) + 'px';
             div.style.top = (slot.c1.y * CELL + 4) + 'px';
 
             div.addEventListener('dragover', e => e.preventDefault());
             div.addEventListener('drop', handleDrop);
-            div.addEventListener('click', handleSlotClick);
+            div.addEventListener('click', handleSlotClick); // Click placed domino to flip
 
             layer.appendChild(div);
         });
@@ -439,8 +513,9 @@
         const tray = document.getElementById('tray');
         tray.innerHTML = '';
         DOMINOES.forEach(d => {
+            // Check if already placed
             const isPlaced = Object.values(placedDominoes).some(pd => pd.domId === d.id);
-            if (isPlaced) return;
+            if(isPlaced) return;
 
             const el = document.createElement('div');
             el.className = 'domino';
@@ -450,12 +525,16 @@
             el.dataset.v2 = d.v2;
             el.dataset.orient = 'v';
             el.innerHTML = createDominoHTML(d.v1, d.v2);
-
+            
             el.addEventListener('dragstart', e => {
                 e.dataTransfer.setData('domId', d.id);
+                // Also store offset if we want precise drag... skipping for simplicity
             });
-
+            
+            // Click to rotate in tray
             el.addEventListener('click', () => {
+               // Just swap visual values for tray rotation? 
+               // Standard Pips doesn't usually rotate in tray, but let's allow flip
                const t = el.dataset.v1;
                el.dataset.v1 = el.dataset.v2;
                el.dataset.v2 = t;
@@ -466,13 +545,19 @@
         });
     }
 
+    // --- INTERACTION ---
+
     function handleDrop(e) {
         e.preventDefault();
         const slot = e.currentTarget;
         const domId = e.dataTransfer.getData('domId');
-        if (placedDominoes[slot.dataset.id]) return;
+        
+        // If slot occupied, return to tray (or swap - basic for now)
+        if(placedDominoes[slot.dataset.id]) return;
 
         const domData = DOMINOES.find(d => d.id === domId);
+        
+        // Place it
         placedDominoes[slot.dataset.id] = {
             domId: domId,
             v1: domData.v1,
@@ -487,7 +572,9 @@
     function handleSlotClick(e) {
         const slot = e.currentTarget;
         const slotId = slot.dataset.id;
-        if (placedDominoes[slotId]) {
+        
+        if(placedDominoes[slotId]) {
+            // Flip the values
             const d = placedDominoes[slotId];
             const temp = d.v1;
             d.v1 = d.v2;
@@ -497,16 +584,21 @@
         }
     }
 
+    // Re-render only the placed items on the board
     function renderPlacedDominoes() {
+        // Clear slots
         document.querySelectorAll('.slot').forEach(s => s.innerHTML = '');
 
         Object.keys(placedDominoes).forEach(slotId => {
             const pd = placedDominoes[slotId];
             const slotEl = document.querySelector(`.slot[data-id="${slotId}"]`);
-
+            
             const domEl = document.createElement('div');
             domEl.className = 'domino';
             domEl.dataset.orient = slotEl.dataset.orient;
+            // Remove drag events from placed items, handled by click to flip
+            // But we want to be able to drag it AWAY later? 
+            // For now, Click to Flip. Double Click to Remove?
             domEl.addEventListener('dblclick', (e) => {
                 e.stopPropagation();
                 delete placedDominoes[slotId];
@@ -531,42 +623,57 @@
         document.querySelectorAll('.check-mark, .error-x').forEach(el => el.style.display = 'none');
     }
 
+    // --- LOGIC CHECKER ---
+
     function checkSolution() {
         clearFeedback();
+        
+        // 1. Build a map of Grid Coordinates to Values
+        // Initialize with null
+        const gridMap = {}; // "x,y" -> value
 
-        const gridMap = {};
         SLOTS.forEach(slot => {
-            if (placedDominoes[slot.id]) {
+            if(placedDominoes[slot.id]) {
                 const p = placedDominoes[slot.id];
+                // Map v1 to c1, v2 to c2
                 gridMap[`${slot.c1.x},${slot.c1.y}`] = p.v1;
                 gridMap[`${slot.c2.x},${slot.c2.y}`] = p.v2;
             }
         });
 
+        // 2. Validate Regions
         let allPass = true;
         let isFull = Object.keys(placedDominoes).length === SLOTS.length;
-        if (!isFull) {
-            alert('Place all dominoes first!');
+
+        if(!isFull) {
+            alert("Place all dominoes first!");
             return;
         }
 
         REGIONS.forEach(reg => {
+            // Get values for this region
             const values = reg.cells.map(c => gridMap[`${c.x},${c.y}`]);
-            if (values.includes(undefined)) {
+            
+            // If any value is undefined, fail hard
+            if(values.includes(undefined)) {
                 allPass = false; return;
             }
 
             let passed = false;
-            if (reg.rule.type === 'sum') {
+            if(reg.rule.type === 'sum') {
                 const sum = values.reduce((a,b)=>a+b, 0);
                 passed = (sum === reg.rule.val);
-            } else if (reg.rule.type === 'equal') {
+            } 
+            else if(reg.rule.type === 'equal') {
                 passed = values.every(v => v === values[0]);
-            } else if (reg.rule.type === 'gt') {
+            }
+            else if(reg.rule.type === 'gt') {
+                // Assuming all cells in region must be > X
                 passed = values.every(v => v > reg.rule.val);
             }
 
-            if (passed) {
+            // Show UI Feedback
+            if(passed) {
                 document.getElementById(`feedback-ok-${reg.id}`).style.display = 'flex';
             } else {
                 document.getElementById(`feedback-fail-${reg.id}`).style.display = 'flex';
@@ -574,12 +681,14 @@
             }
         });
 
-        if (allPass) {
-            setTimeout(() => alert('Puzzle Solved! Great job.'), 100);
+        if(allPass) {
+            setTimeout(() => alert("Puzzle Solved! Great job."), 100);
         }
     }
 
+    // Start
     init();
+
 </script>
 </body>
 </html>
