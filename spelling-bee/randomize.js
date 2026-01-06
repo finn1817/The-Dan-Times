@@ -21,59 +21,68 @@ async function loadData() {
 
         console.log(`Loaded ${allLetterCombos.length} letter combinations`);
         console.log(`Loaded ${allValidWords.length} valid words`);
-    } catch (error) {
-        console.error('Error loading data:', error);
-    }
-}
+    // Get random puzzle
+    function getRandomPuzzle() {
+        if (allLetterCombos.length === 0) {
+            console.error('No letter combinations loaded!');
+            return null;
+        }
 
-// Get random puzzle
-function getRandomPuzzle() {
-    if (allLetterCombos.length === 0) {
-        console.error('No letter combinations loaded!');
+        // Try multiple random combos until we find one with valid words
+        for (let attempt = 0; attempt < 100; attempt++) {
+            const randomCombo = allLetterCombos[Math.floor(Math.random() * allLetterCombos.length)];
+            const allLetters = [randomCombo.center, ...randomCombo.outer];
+
+            // Find valid words for this puzzle
+            const validWords = allValidWords.filter(word => {
+                // Must be at least 4 letters
+                if (word.length < 4) return false;
+            
+                // Must contain center letter
+                if (!word.includes(randomCombo.center)) return false;
+            
+                // All letters must be in the puzzle
+                return word.split('').every(letter => allLetters.includes(letter));
+            });
+
+            if (validWords.length === 0) {
+                continue; // Try another combo
+            }
+
+            // Find pangrams (words using all 7 letters)
+            const pangrams = validWords.filter(word => {
+                const uniqueLetters = [...new Set(word.split(''))];
+                return uniqueLetters.length === 7;
+            });
+
+            // Calculate max score
+            let maxScore = 0;
+            validWords.forEach(word => {
+                if (word.length === 4) {
+                    maxScore += 1;
+                } else {
+                    maxScore += word.length;
+                }
+                if (pangrams.includes(word)) {
+                    maxScore += 7; // Pangram bonus
+                }
+            });
+
+            if (maxScore > 0) {
+                return {
+                    center: randomCombo.center,
+                    outer: randomCombo.outer,
+                    allLetters: allLetters,
+                    validWords: validWords,
+                    pangrams: pangrams,
+                    maxScore: maxScore
+                };
+            }
+        }
+
+        console.error('Unable to find a valid puzzle with current data.');
         return null;
     }
-
-    const randomCombo = allLetterCombos[Math.floor(Math.random() * allLetterCombos.length)];
-    const allLetters = [randomCombo.center, ...randomCombo.outer];
-
-    // Find valid words for this puzzle
-    const validWords = allValidWords.filter(word => {
-        // Must be at least 4 letters
-        if (word.length < 4) return false;
-        
-        // Must contain center letter
-        if (!word.includes(randomCombo.center)) return false;
-        
-        // All letters must be in the puzzle
-        return word.split('').every(letter => allLetters.includes(letter));
-    });
-
-    // Find pangrams (words using all 7 letters)
-    const pangrams = validWords.filter(word => {
-        const uniqueLetters = [...new Set(word.split(''))];
-        return uniqueLetters.length === 7;
-    });
-
-    // Calculate max score
-    let maxScore = 0;
-    validWords.forEach(word => {
-        if (word.length === 4) {
-            maxScore += 1;
-        } else {
-            maxScore += word.length;
-        }
-        if (pangrams.includes(word)) {
-            maxScore += 7; // Pangram bonus
-        }
-    });
-
-    return {
-        center: randomCombo.center,
-        outer: randomCombo.outer,
-        allLetters: allLetters,
-        validWords: validWords,
-        pangrams: pangrams,
-        maxScore: maxScore
     };
 }
 
