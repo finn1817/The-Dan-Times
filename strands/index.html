@@ -191,19 +191,27 @@
         currentLevelData = data;
         document.getElementById('theme-text').innerText = data.theme;
         
-        // Build a fresh scrambled layout from the word list
-        let wordsList = null;
-        if (Array.isArray(data.words) && data.words.length > 0) {
-            wordsList = data.words.slice();
-        } else if (data.solutions) {
-            wordsList = Object.keys(data.solutions);
+        // Check if data.grid and data.solutions are already present
+        if (data.grid && data.solutions) {
+            // Use pre-generated grid and solutions directly
+            gridLetters = data.grid;
+            wordMap = data.solutions;
         } else {
-            wordsList = [];
-        }
+            // Fallback: Build a fresh scrambled layout from the word list
+            let wordsList = null;
+            if (Array.isArray(data.words) && data.words.length > 0) {
+                wordsList = data.words.slice();
+            } else if (data.solutions) {
+                wordsList = Object.keys(data.solutions);
+            } else {
+                wordsList = [];
+            }
 
-        const generated = generateGridFromWords(wordsList);
-        gridLetters = generated.grid;
-        wordMap = generated.solutions;
+            const generated = generateGridFromWords(wordsList);
+            gridLetters = generated.grid;
+            wordMap = generated.solutions;
+        }
+        
         totalWords = Object.keys(wordMap).length;
         document.getElementById('count-total').innerText = totalWords;
         

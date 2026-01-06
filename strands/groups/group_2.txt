@@ -1,14 +1,14 @@
 {
   "theme": "Furry Friends",
   "spangram": "CANINE",
-  "grid": "RABBITPIGEONKITTENTURTLEPARROTGERBILCANINEFELINE",
+  "grid": "RTIIBARKNGEENTEIOPLRGATRUNITBLCERFAEILNOEGN",
   "solutions": {
-    "RABBIT": [0, 1, 2, 3, 4, 5],
-    "PIGEON": [6, 7, 8, 9, 10, 11],
-    "KITTEN": [12, 13, 14, 15, 16, 17],
-    "TURTLE": [18, 19, 20, 21, 22, 23],
-    "PARROT": [24, 25, 26, 27, 28, 29],
-    "GERBIL": [30, 31, 32, 33, 34, 35],
+    "RABBIT": [0, 6, 1, 7, 2, 8],
+    "PIGEON": [3, 9, 4, 10, 16, 22],
+    "KITTEN": [5, 11, 17, 23, 24, 18],
+    "TURTLE": [12, 13, 19, 25, 31, 30],
+    "PARROT": [14, 20, 26, 32, 33, 27],
+    "GERBIL": [15, 21, 28, 34, 35, 29],
     "CANINE": [36, 37, 38, 39, 40, 41],
     "FELINE": [42, 43, 44, 45, 46, 47]
   }
