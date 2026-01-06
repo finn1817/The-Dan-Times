@@ -1,3 +1,5 @@
+import { BOARD_SHAPES, Rules } from './board-shapes.js';
+
 class PuzzleGenerator {
     constructor() {
         this.ruleTypes = ['sum', 'match', 'min', 'max', 'different', 'none'];
@@ -6,6 +8,32 @@ class PuzzleGenerator {
 
     generatePuzzle(difficulty = 'easy') {
         const config = this.getDifficultyConfig(difficulty);
+
+        // If we have a hand-crafted board shape for this difficulty, use it
+        // instead of random blob regions. This matches the NYT-style fixed
+        // layouts.
+        const shapeList = BOARD_SHAPES[difficulty] || [];
+        const shape = shapeList[0] || null;
+
+        if (shape) {
+            // Copy so the caller can’t mutate the shared definition.
+            return {
+                gridSize: { ...shape.gridSize },
+                regions: shape.regions.map(r => ({
+                    id: r.id,
+                    cells: r.cells.map(c => ({ row: c.row, col: c.col })),
+                    rule: r.rule,
+                    color: r.color,
+                })),
+                // For now we don’t compute an automatic solution for
+                // shaped boards – you can plug in a predefined one via
+                // PREDEFINED_PUZZLES instead.
+                solution: [],
+                difficulty,
+            };
+        }
+
+        // Fallback: older random grid generator.
         const grid = this.createGrid(config.gridSize);
         const regions = this.createRegions(grid, config);
         const placement = this.solvePuzzle(grid, regions);
@@ -94,16 +122,25 @@ class PuzzleGenerator {
     }
 
     generateRule(type, regionSize) {
-        const rules = {
-            sum: { type: 'sum', value: Math.floor(Math.random() * 20) + 10, label: (v) => `${v}` },
-            match: { type: 'match', value: Math.floor(Math.random() * 6) + 1, label: (v) => `${v}` },
-            min: { type: 'min', value: Math.floor(Math.random() * 4) + 2, label: (v) => `${v}↑` },
-            max: { type: 'max', value: Math.floor(Math.random() * 4) + 2, label: (v) => `${v}↓` },
-            different: { type: 'different', value: null, label: () => '⊕' },
-            none: { type: 'none', value: null, label: () => '' }
-        };
-
-        return rules[type] || rules.none;
+        // Keep the old random rule generation for fallback puzzles, but
+        // prefer the shared helpers so labels stay consistent.
+        switch (type) {
+            case 'sum':
+                return Rules.sum(Math.floor(Math.random() * 20) + 10);
+            case 'match':
+                return Rules.match(Math.floor(Math.random() * 6) + 1);
+            case 'min':
+                return Rules.min(Math.floor(Math.random() * 4) + 2);
+            case 'max':
+                return Rules.max(Math.floor(Math.random() * 4) + 2);
+            case 'different':
+                return Rules.different();
+            case 'zero':
+                return Rules.zero();
+            case 'none':
+            default:
+                return { type: 'none', value: null, label: () => '' };
+        }
     }
 
     solvePuzzle(grid, regions) {

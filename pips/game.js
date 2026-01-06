@@ -391,6 +391,10 @@ class PipsGame {
                 return values.every(v => v <= region.rule.value);
             case 'different':
                 return new Set(values).size === values.length;
+            case 'zero':
+                // Zero regions: all values must be exactly 0. Treats
+                // "blank" beige cells as requiring 0-pip halves.
+                return values.every(v => v === 0);
             case 'none':
                 return true;
             default:
