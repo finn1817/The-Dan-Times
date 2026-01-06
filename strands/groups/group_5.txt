@@ -1,18 +1,18 @@
 {
-  "theme": "Solar System",
-  "spangram": "GALAXY",
-  "grid": "MARSSUNEARTHVENUSPLUTOMOONSTARCOMETGALAXYORBITSK",
+  "theme": "Coding",
+  "spangram": "FULLSTACK",
+  "grid": "HTMLCSJAVASCRUBYPYTHREACTNODESQLFULLSTACKCODEDATAWEB",
   "solutions": {
-    "MARS": [0, 1, 2, 3],
-    "SUN": [4, 5, 11],
-    "EARTH": [6, 7, 8, 9, 10],
-    "VENUS": [12, 13, 14, 15, 16],
-    "PLUTO": [17, 18, 19, 20, 26],
-    "MOON": [21, 22, 23, 29],
-    "STAR": [24, 25, 31, 30],
-    "COMET": [27, 28, 34, 33, 32],
-    "GALAXY": [35, 36, 37, 43, 44, 45],
-    "ORBIT": [38, 39, 40, 41, 47],
-    "SKY": [42, 46, 47]
+    "HTML": [0, 1, 2, 3],
+    "CSS": [4, 5, 11],
+    "JAVASCRIPT": [6, 7, 8, 9, 10, 16, 15, 14, 13, 12],
+    "RUBY": [17, 18, 24, 25],
+    "PYTHON": [19, 20, 21, 22, 23, 29],
+    "REACT": [26, 27, 28, 34, 33],
+    "NODE": [30, 31, 32, 38],
+    "SQL": [35, 36, 37],
+    "FULLSTACK": [39, 40, 41, 47, 46, 45, 44, 43, 42],
+    "DATA": [48, 49, 50, 51], 
+    "WEB": [52, 53, 54] 
   }
 }

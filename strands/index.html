@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Strands - The Dans Times</title>
+    <title>Strands - The Daily Clone</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Karnak+Pro:wght@700&family=Franklin+Gothic:wght@500;700&display=swap');
 
         :root {
             --bg-color: #fdfbf7;
             --grid-gap: 12px;
-            --letter-size: 46px; /* Slightly larger targets */
+            --letter-size: 44px;
             --theme-blue: #cce5ff;
             --theme-blue-text: #1c3a5e;
             --spangram-yellow: #fcf4db;
@@ -48,7 +48,7 @@
         h1 { font-family: var(--font-serif); font-size: 1.8rem; margin: 0; }
         .date { font-size: 0.8rem; font-weight: bold; color: #333; }
 
-        #game-info { text-align: center; padding: 20px 10px; max-width: 400px; }
+        #game-info { text-align: center; padding: 20px; max-width: 400px; }
         .theme-label { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #666; }
         .theme-text { font-size: 1.2rem; font-weight: bold; margin: 5px 0 15px 0; }
         
@@ -71,7 +71,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
@@ -80,11 +80,12 @@
             background-color: transparent;
         }
 
+        /* SVG Line Layer - Must be pointer-events: none to allow swiping */
         #line-layer {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            pointer-events: none; /* CRITICAL for drag */
+            pointer-events: none;
             z-index: 1; 
             overflow: visible;
         }
@@ -124,7 +125,7 @@
 <header>
     <div style="font-weight:bold; font-size:1.2rem;">☰</div>
     <h1>Strands</h1>
-    <div class="date" id="date-display">Clone</div>
+    <div class="date">Daily Clone</div>
 </header>
 
 <div id="game-info">
@@ -151,8 +152,8 @@
 
 <div id="modal">
     <h2 style="font-family: var(--font-serif); font-size: 2rem;">Puzzle Solved!</h2>
-    <div id="word-list" style="text-align:center; font-size:1.2rem; line-height:1.8;"></div>
-    <button onclick="location.reload()" style="background:#000; color:#fff; border:none; padding:15px 30px; border-radius:30px; margin-top:20px; font-weight:bold;">Play Next Level</button>
+    <div id="word-list" style="text-align:center; line-height:1.6; font-size:1.2rem;"></div>
+    <button onclick="location.reload()" style="background:#000; color:#fff; border:none; padding:15px 30px; border-radius:30px; margin-top:20px; cursor:pointer;">Play Next Level</button>
 </div>
 
 <script>
@@ -171,21 +172,18 @@
     const polyline = document.getElementById('drag-polyline');
     const foundLinesGroup = document.getElementById('found-lines');
 
+    // 1. Init
     async function initGame() {
-        // Random 1-5
         const groupId = Math.floor(Math.random() * 5) + 1;
-        // const groupId = 1; // Uncomment to force level 1 for testing
         console.log(`Loading Group ${groupId}`);
-
         try {
             const response = await fetch(`groups/group_${groupId}.txt`);
-            if (!response.ok) throw new Error("File not found");
+            if (!response.ok) throw new Error("File missing");
             const data = await response.json();
             setupLevel(data);
         } catch (e) {
             console.error(e);
-            document.getElementById('theme-text').innerText = "Error: Check groups/ folder";
-            document.getElementById('theme-text').style.color = "red";
+            document.getElementById('theme-text').innerText = "Error: Check group files";
         }
     }
 
@@ -194,7 +192,6 @@
         document.getElementById('theme-text').innerText = data.theme;
         gridLetters = data.grid;
         wordMap = data.solutions; 
-        
         totalWords = Object.keys(wordMap).length;
         document.getElementById('count-total').innerText = totalWords;
         
@@ -207,7 +204,7 @@
             gridEl.appendChild(d);
         }
 
-        // Attach listeners to Document for better drag handling
+        // 2. Interaction
         document.addEventListener('pointerdown', startDrag);
         document.addEventListener('pointermove', handleMove);
         document.addEventListener('pointerup', endDrag);
@@ -215,8 +212,7 @@
 
     function startDrag(e) {
         const cell = e.target.closest('.cell');
-        if (!cell) return;
-        if (foundWords.size === totalWords) return;
+        if (!cell || foundWords.size === totalWords) return;
         
         isDragging = true;
         const idx = parseInt(cell.dataset.idx);
@@ -229,27 +225,21 @@
 
     function handleMove(e) {
         if (!isDragging) return;
-
-        // Use elementFromPoint for hit testing
         const target = document.elementFromPoint(e.clientX, e.clientY);
         if (!target) return;
-
         const cell = target.closest('.cell');
         if (!cell) return;
 
         const idx = parseInt(cell.dataset.idx);
         const lastIdx = currentPath[currentPath.length - 1];
-
         if (lastIdx === undefined) return;
 
-        // 1. Backtrack
         if (currentPath.length > 1 && idx === currentPath[currentPath.length - 2]) {
             currentPath.pop();
             updateVisuals();
             return;
         }
 
-        // 2. Add New (Strict Adjacency)
         if (idx !== lastIdx && !currentPath.includes(idx) && isAdjacent(lastIdx, idx) && !isCellFound(idx)) {
             currentPath.push(idx);
             updateVisuals();
@@ -260,7 +250,6 @@
         if (!isDragging) return;
         isDragging = false;
         
-        // Check Word (Forward OR Reverse)
         const formedWord = currentPath.map(i => gridLetters[i]).join("");
         const reversedWord = formedWord.split('').reverse().join('');
         
@@ -277,20 +266,17 @@
         updateVisuals();
     }
 
+    // 3. Helpers
     function isAdjacent(i1, i2) {
         const r1 = Math.floor(i1 / COLS);
         const c1 = i1 % COLS;
         const r2 = Math.floor(i2 / COLS);
         const c2 = i2 % COLS;
-        const rDiff = Math.abs(r1 - r2);
-        const cDiff = Math.abs(c1 - c2);
-        return (rDiff <= 1 && cDiff <= 1) && !(rDiff === 0 && cDiff === 0);
+        return (Math.abs(r1 - r2) <= 1 && Math.abs(c1 - c2) <= 1) && !(r1===r2 && c1===c2);
     }
 
     function isCellFound(idx) {
-        for (let w of foundWords) {
-            if (wordMap[w].includes(idx)) return true;
-        }
+        for (let w of foundWords) if (wordMap[w].includes(idx)) return true;
         return false;
     }
 
@@ -300,7 +286,6 @@
             if (currentPath.includes(idx)) c.classList.add('selected');
             else c.classList.remove('selected');
         });
-
         if (currentPath.length < 2) {
             polyline.setAttribute('points', '');
             return;
@@ -320,10 +305,9 @@
     function finalizeWord(word) {
         const indices = wordMap[word];
         const isSpangram = (word === currentLevelData.spangram);
-        
+        const color = isSpangram ? '#b59f3b' : '#1c3a5e';
         const cellClass = isSpangram ? 'found-spangram' : 'found-word';
-        const strokeColor = isSpangram ? '#b59f3b' : '#1c3a5e';
-        
+
         indices.forEach(idx => {
             const c = document.querySelector(`.cell[data-idx="${idx}"]`);
             if(c) {
@@ -332,28 +316,27 @@
             }
         });
 
-        // Use the path stored in JSON to draw the perfect line
+        // Use the indices from the file to draw the perfect line
         const points = indices.map(idx => getCenterCoord(idx)).join(" ");
         const newLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
         newLine.setAttribute('points', points);
         newLine.setAttribute('class', 'connector-line');
-        newLine.style.stroke = strokeColor;
+        newLine.style.stroke = color;
         newLine.style.opacity = 0.4;
         foundLinesGroup.appendChild(newLine);
 
         document.getElementById('count-found').innerText = foundWords.size;
         if(isSpangram) {
-            const spanEl = document.getElementById('span-status');
-            spanEl.innerText = word;
-            spanEl.style.color = "#b59f3b";
-            spanEl.style.fontWeight = "bold";
+            document.getElementById('span-status').innerText = word;
+            document.getElementById('span-status').style.color = "#b59f3b";
+            document.getElementById('span-status').style.fontWeight = "bold";
         }
         
         if (foundWords.size === totalWords) {
             setTimeout(() => {
                 let html = "";
-                if(currentLevelData.spangram) html += `<div style="color:#b59f3b;font-weight:bold;margin-bottom:10px;">${currentLevelData.spangram}</div>`;
-                foundWords.forEach(w => { if(w !== currentLevelData.spangram) html += `<div>${w}</div>`; });
+                if(currentLevelData.spangram) html += `<div style="color:#b59f3b; font-weight:bold; margin-bottom:15px;">${currentLevelData.spangram}</div>`;
+                foundWords.forEach(w => { if(w!==currentLevelData.spangram) html += `<div>${w}</div>`; });
                 document.getElementById('word-list').innerHTML = html;
                 document.getElementById('modal').style.display = 'flex';
             }, 500);
@@ -365,14 +348,12 @@
         const missing = all.find(w => !foundWords.has(w));
         if (missing) {
             const idx = wordMap[missing][0];
-            const cell = document.querySelector(`.cell[data-idx="${idx}"]`);
-            if (cell) {
-                cell.style.backgroundColor = "pink";
-                setTimeout(() => cell.style.backgroundColor = "", 1000);
-            }
+            const c = document.querySelector(`.cell[data-idx="${idx}"]`);
+            c.style.backgroundColor = "pink";
+            setTimeout(() => c.style.backgroundColor = "", 1000);
         }
     }
-    // wtf
+
     initGame();
 </script>
 </body>
