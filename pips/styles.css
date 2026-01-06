@@ -190,6 +190,17 @@ header h1 {
     transition: all 0.2s;
 }
 
+.cell.inactive-cell {
+    background: #f5f5f5;
+    border: 1px dashed #ccc;
+    pointer-events: none;
+}
+
+.cell.active-cell {
+    background: white;
+    cursor: pointer;
+}
+
 .cell.region-pink { background: #ffb6d9; }
 .cell.region-blue { background: #b6e5ff; }
 .cell.region-orange { background: #ffd4a3; }
@@ -197,6 +208,7 @@ header h1 {
 .cell.region-purple { background: #e6b6ff; }
 .cell.region-yellow { background: #fff4b6; }
 .cell.region-gray { background: #e8e8e8; }
+.cell.region-cyan { background: #a3f5ff; }
 
 .cell.highlight {
     border-color: #666;

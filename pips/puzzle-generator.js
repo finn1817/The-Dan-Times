@@ -151,27 +151,102 @@ class PuzzleGenerator {
     }
 }
 
-// Predefined puzzles
+// Predefined puzzles matching real Pips game style
 const PREDEFINED_PUZZLES = {
     easy: [
         {
-            gridSize: { rows: 5, cols: 7 },
+            gridSize: { rows: 5, cols: 5 },
             regions: [
                 { id: 0, cells: [{row:0,col:0},{row:0,col:1},{row:1,col:0},{row:1,col:1}], rule: {type:'sum',value:14,label:(v)=>`${v}`}, color:'pink' },
-                { id: 1, cells: [{row:0,col:2},{row:0,col:3},{row:1,col:2}], rule: {type:'match',value:3,label:(v)=>`${v}`}, color:'blue' },
-                { id: 2, cells: [{row:2,col:0},{row:2,col:1},{row:3,col:0},{row:3,col:1}], rule: {type:'min',value:4,label:(v)=>`${v}↑`}, color:'orange' },
-                { id: 3, cells: [{row:2,col:2},{row:2,col:3},{row:3,col:2},{row:3,col:3}], rule: {type:'different',value:null,label:()=>'⊕'}, color:'green' }
+                { id: 1, cells: [{row:0,col:2},{row:0,col:3},{row:1,col:2},{row:1,col:3}], rule: {type:'sum',value:9,label:(v)=>`${v}`}, color:'blue' },
+                { id: 2, cells: [{row:2,col:0},{row:2,col:1},{row:3,col:0},{row:3,col:1}], rule: {type:'sum',value:8,label:(v)=>`${v}`}, color:'orange' },
+                { id: 3, cells: [{row:2,col:2},{row:2,col:3},{row:3,col:2},{row:3,col:3}], rule: {type:'sum',value:12,label:(v)=>`${v}`}, color:'green' }
             ],
             solution: [
                 { domino: '6-6', cells: [{row:0,col:0},{row:0,col:1}], orientation: 'horizontal' },
                 { domino: '1-1', cells: [{row:1,col:0},{row:1,col:1}], orientation: 'horizontal' },
-                { domino: '3-3', cells: [{row:0,col:2},{row:1,col:2}], orientation: 'vertical' },
-                { domino: '5-4', cells: [{row:2,col:0},{row:3,col:0}], orientation: 'vertical' },
-                { domino: '4-5', cells: [{row:2,col:1},{row:3,col:1}], orientation: 'vertical' },
-                { domino: '2-6', cells: [{row:2,col:2},{row:3,col:2}], orientation: 'vertical' },
-                { domino: '3-5', cells: [{row:2,col:3},{row:3,col:3}], orientation: 'vertical' }
+                { domino: '3-3', cells: [{row:0,col:2},{row:0,col:3}], orientation: 'horizontal' },
+                { domino: '3-0', cells: [{row:1,col:2},{row:1,col:3}], orientation: 'horizontal' },
+                { domino: '5-2', cells: [{row:2,col:0},{row:3,col:0}], orientation: 'vertical' },
+                { domino: '1-0', cells: [{row:2,col:1},{row:3,col:1}], orientation: 'vertical' },
+                { domino: '4-5', cells: [{row:2,col:2},{row:3,col:2}], orientation: 'vertical' },
+                { domino: '2-1', cells: [{row:2,col:3},{row:3,col:3}], orientation: 'vertical' }
             ],
             difficulty: 'easy'
+        },
+        {
+            gridSize: { rows: 6, cols: 5 },
+            regions: [
+                { id: 0, cells: [{row:0,col:1},{row:0,col:2},{row:1,col:1},{row:1,col:2}], rule: {type:'sum',value:11,label:(v)=>`${v}`}, color:'purple' },
+                { id: 1, cells: [{row:2,col:0},{row:2,col:1},{row:3,col:0},{row:3,col:1}], rule: {type:'sum',value:6,label:(v)=>`${v}`}, color:'blue' },
+                { id: 2, cells: [{row:2,col:2},{row:3,col:2},{row:4,col:2},{row:5,col:2}], rule: {type:'sum',value:11,label:(v)=>`${v}`}, color:'cyan' },
+                { id: 3, cells: [{row:4,col:0},{row:4,col:1},{row:5,col:0},{row:5,col:1}], rule: {type:'sum',value:9,label:(v)=>`${v}`}, color:'pink' }
+            ],
+            solution: [
+                { domino: '4-4', cells: [{row:0,col:1},{row:0,col:2}], orientation: 'horizontal' },
+                { domino: '2-1', cells: [{row:1,col:1},{row:1,col:2}], orientation: 'horizontal' },
+                { domino: '0-0', cells: [{row:2,col:0},{row:3,col:0}], orientation: 'vertical' },
+                { domino: '3-3', cells: [{row:2,col:1},{row:3,col:1}], orientation: 'vertical' },
+                { domino: '6-0', cells: [{row:2,col:2},{row:3,col:2}], orientation: 'vertical' },
+                { domino: '5-0', cells: [{row:4,col:2},{row:5,col:2}], orientation: 'vertical' },
+                { domino: '5-1', cells: [{row:4,col:0},{row:4,col:1}], orientation: 'horizontal' },
+                { domino: '2-1', cells: [{row:5,col:0},{row:5,col:1}], orientation: 'horizontal' }
+            ],
+            difficulty: 'easy'
+        }
+    ],
+    medium: [
+        {
+            gridSize: { rows: 6, cols: 6 },
+            regions: [
+                { id: 0, cells: [{row:0,col:1},{row:0,col:2},{row:1,col:1},{row:1,col:2}], rule: {type:'min',value:4,label:(v)=>`${v}↑`}, color:'orange' },
+                { id: 1, cells: [{row:0,col:3},{row:0,col:4},{row:1,col:3},{row:1,col:4}], rule: {type:'different',value:null,label:()=>'⊕'}, color:'purple' },
+                { id: 2, cells: [{row:2,col:0},{row:2,col:1},{row:3,col:0},{row:3,col:1}], rule: {type:'match',value:3,label:(v)=>`${v}`}, color:'blue' },
+                { id: 3, cells: [{row:2,col:2},{row:2,col:3},{row:3,col:2},{row:3,col:3}], rule: {type:'sum',value:18,label:(v)=>`${v}`}, color:'green' },
+                { id: 4, cells: [{row:4,col:1},{row:4,col:2},{row:5,col:1},{row:5,col:2}], rule: {type:'max',value:3,label:(v)=>`${v}↓`}, color:'yellow' }
+            ],
+            solution: [
+                { domino: '6-5', cells: [{row:0,col:1},{row:0,col:2}], orientation: 'horizontal' },
+                { domino: '4-4', cells: [{row:1,col:1},{row:1,col:2}], orientation: 'horizontal' },
+                { domino: '1-2', cells: [{row:0,col:3},{row:0,col:4}], orientation: 'horizontal' },
+                { domino: '6-3', cells: [{row:1,col:3},{row:1,col:4}], orientation: 'horizontal' },
+                { domino: '3-3', cells: [{row:2,col:0},{row:3,col:0}], orientation: 'vertical' },
+                { domino: '3-3', cells: [{row:2,col:1},{row:3,col:1}], orientation: 'vertical' },
+                { domino: '6-6', cells: [{row:2,col:2},{row:3,col:2}], orientation: 'vertical' },
+                { domino: '5-1', cells: [{row:2,col:3},{row:3,col:3}], orientation: 'vertical' },
+                { domino: '2-0', cells: [{row:4,col:1},{row:4,col:2}], orientation: 'horizontal' },
+                { domino: '3-1', cells: [{row:5,col:1},{row:5,col:2}], orientation: 'horizontal' }
+            ],
+            difficulty: 'medium'
+        }
+    ],
+    hard: [
+        {
+            gridSize: { rows: 7, cols: 7 },
+            regions: [
+                { id: 0, cells: [{row:0,col:2},{row:0,col:3},{row:1,col:2},{row:1,col:3}], rule: {type:'sum',value:9,label:(v)=>`${v}`}, color:'purple' },
+                { id: 1, cells: [{row:1,col:0},{row:1,col:1},{row:2,col:0},{row:2,col:1}], rule: {type:'different',value:null,label:()=>'⊕'}, color:'cyan' },
+                { id: 2, cells: [{row:2,col:2},{row:2,col:3},{row:3,col:2},{row:3,col:3},{row:4,col:2},{row:4,col:3}], rule: {type:'sum',value:21,label:(v)=>`${v}`}, color:'green' },
+                { id: 3, cells: [{row:3,col:4},{row:3,col:5},{row:4,col:4},{row:4,col:5}], rule: {type:'max',value:4,label:(v)=>`${v}↓`}, color:'yellow' },
+                { id: 4, cells: [{row:5,col:1},{row:5,col:2},{row:6,col:1},{row:6,col:2}], rule: {type:'min',value:3,label:(v)=>`${v}↑`}, color:'orange' },
+                { id: 5, cells: [{row:5,col:3},{row:5,col:4},{row:6,col:3},{row:6,col:4}], rule: {type:'sum',value:10,label:(v)=>`${v}`}, color:'pink' }
+            ],
+            solution: [
+                { domino: '5-2', cells: [{row:0,col:2},{row:0,col:3}], orientation: 'horizontal' },
+                { domino: '1-1', cells: [{row:1,col:2},{row:1,col:3}], orientation: 'horizontal' },
+                { domino: '0-1', cells: [{row:1,col:0},{row:2,col:0}], orientation: 'vertical' },
+                { domino: '6-2', cells: [{row:1,col:1},{row:2,col:1}], orientation: 'vertical' },
+                { domino: '6-6', cells: [{row:2,col:2},{row:3,col:2}], orientation: 'vertical' },
+                { domino: '4-3', cells: [{row:2,col:3},{row:3,col:3}], orientation: 'vertical' },
+                { domino: '1-1', cells: [{row:4,col:2},{row:4,col:3}], orientation: 'horizontal' },
+                { domino: '3-2', cells: [{row:3,col:4},{row:3,col:5}], orientation: 'horizontal' },
+                { domino: '4-0', cells: [{row:4,col:4},{row:4,col:5}], orientation: 'horizontal' },
+                { domino: '5-3', cells: [{row:5,col:1},{row:5,col:2}], orientation: 'horizontal' },
+                { domino: '4-6', cells: [{row:6,col:1},{row:6,col:2}], orientation: 'horizontal' },
+                { domino: '2-5', cells: [{row:5,col:3},{row:5,col:4}], orientation: 'horizontal' },
+                { domino: '3-0', cells: [{row:6,col:3},{row:6,col:4}], orientation: 'horizontal' }
+            ],
+            difficulty: 'hard'
         }
     ]
 };

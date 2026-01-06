@@ -103,6 +103,7 @@ class PipsGame {
                 const region = cellRegionMap.get(`${row},${col}`);
                 if (region) {
                     cell.classList.add(`region-${region.color}`);
+                    cell.classList.add('active-cell');
                     
                     // Add rule label to first cell of region
                     if (region.cells[0].row === row && region.cells[0].col === col) {
@@ -111,37 +112,43 @@ class PipsGame {
                         label.textContent = region.rule.label(region.rule.value);
                         cell.appendChild(label);
                     }
+                } else {
+                    // Inactive cell - not part of any region
+                    cell.classList.add('inactive-cell');
                 }
 
-                // Drop target
-                cell.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                });
+                // Only make active cells interactive
+                if (region) {
+                    // Drop target
+                    cell.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                    });
 
-                cell.addEventListener('dragenter', (e) => {
-                    e.preventDefault();
-                    if (this.canPlaceDomino(row, col)) {
-                        cell.classList.add('drop-target');
-                    }
-                });
+                    cell.addEventListener('dragenter', (e) => {
+                        e.preventDefault();
+                        if (this.canPlaceDomino(row, col)) {
+                            cell.classList.add('drop-target');
+                        }
+                    });
 
-                cell.addEventListener('dragleave', (e) => {
-                    cell.classList.remove('drop-target');
-                });
+                    cell.addEventListener('dragleave', (e) => {
+                        cell.classList.remove('drop-target');
+                    });
 
-                cell.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    cell.classList.remove('drop-target');
-                    this.placeDomino(row, col);
-                });
-
-                // Click to place
-                cell.addEventListener('click', () => {
-                    if (this.selectedDomino && this.canPlaceDomino(row, col)) {
+                    cell.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        cell.classList.remove('drop-target');
                         this.placeDomino(row, col);
-                    }
-                });
+                    });
+
+                    // Click to place
+                    cell.addEventListener('click', () => {
+                        if (this.selectedDomino && this.canPlaceDomino(row, col)) {
+                            this.placeDomino(row, col);
+                        }
+                    });
+                }
 
                 board.appendChild(cell);
             }
@@ -177,18 +184,36 @@ class PipsGame {
         const orientation = this.selectedDomino.dataset.orientation;
         const { rows, cols } = this.currentPuzzle.gridSize;
 
-        // Check bounds
+        // Determine the second cell position
+        let row2, col2;
         if (orientation === 'horizontal') {
-            if (col + 1 >= cols) return false;
+            row2 = row;
+            col2 = col + 1;
         } else {
-            if (row + 1 >= rows) return false;
+            row2 = row + 1;
+            col2 = col;
         }
+
+        // Check bounds
+        if (row2 >= rows || col2 >= cols) return false;
+
+        // Check if both cells are active (part of a region)
+        const cell1Active = this.isCellActive(row, col);
+        const cell2Active = this.isCellActive(row2, col2);
+        
+        if (!cell1Active || !cell2Active) return false;
 
         // Check if cells are empty
         const cell1Key = `${row},${col}`;
-        const cell2Key = orientation === 'horizontal' ? `${row},${col + 1}` : `${row + 1},${col}`;
+        const cell2Key = `${row2},${col2}`;
 
         return !this.placedDominoes.has(cell1Key) && !this.placedDominoes.has(cell2Key);
+    }
+
+    isCellActive(row, col) {
+        return this.currentPuzzle.regions.some(region => 
+            region.cells.some(cell => cell.row === row && cell.col === col)
+        );
     }
 
     placeDomino(row, col) {
