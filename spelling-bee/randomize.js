@@ -21,9 +21,6 @@ async function loadData() {
 
         console.log(`Loaded ${allLetterCombos.length} letter combinations`);
         console.log(`Loaded ${allValidWords.length} valid words`);
-            // Choose an initial puzzle so other scripts can initialize
-            currentPuzzle = getRandomPuzzle();
-            console.log('Initial puzzle selected:', currentPuzzle ? currentPuzzle.center : null, currentPuzzle ? currentPuzzle.allLetters : null);
     } catch (error) {
         console.error('Error loading data:', error);
     }
@@ -80,5 +77,4 @@ function getRandomPuzzle() {
     };
 }
 
-// Initialize data loading
-loadData();
+// Data is loaded by game.js before starting a puzzle

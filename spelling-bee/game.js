@@ -13,25 +13,27 @@ const ranks = [
     { name: 'Genius', threshold: 0.75 }
 ];
 
-// Wait for puzzle to load
-let initAttempts = 0;
-function waitForPuzzle() {
-    if (currentPuzzle && currentPuzzle.validWords.length > 0) {
+// Start game after data is loaded
+async function startGame() {
+    try {
+        await loadData();
+
+        const puzzle = getRandomPuzzle();
+        if (!puzzle || !puzzle.validWords || puzzle.validWords.length === 0) {
+            document.getElementById('message').textContent = 'Error loading puzzle. Please refresh.';
+            return;
+        }
+
+        currentPuzzle = puzzle;
         initGame();
-    } else if (initAttempts < 50) {
-        initAttempts++;
-        setTimeout(waitForPuzzle, 100);
-    } else {
+    } catch (error) {
+        console.error('Error starting game:', error);
         document.getElementById('message').textContent = 'Error loading puzzle. Please refresh.';
     }
 }
 
 // Initialize game
 function initGame() {
-    if (!currentPuzzle) {
-        currentPuzzle = getRandomPuzzle();
-    }
-    
     currentWord = '';
     foundWords = [];
     score = 0;
@@ -281,10 +283,10 @@ document.addEventListener('keydown', (e) => {
     } else if (key === 'BACKSPACE') {
         e.preventDefault();
         deleteLetter();
-    } else if (currentPuzzle.allLetters.includes(key)) {
+    } else if (currentPuzzle && currentPuzzle.allLetters.includes(key)) {
         addLetter(key, key === currentPuzzle.center);
     }
 });
 
-// Start game when puzzle is ready
-waitForPuzzle();
+// Start game when data is ready
+startGame();
