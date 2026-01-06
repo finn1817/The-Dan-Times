@@ -91,6 +91,10 @@ main {
     background: linear-gradient(135deg, #f7da21 0%, #e6c200 100%);
 }
 
+.pips-icon {
+    background: linear-gradient(135deg, #7ec8c9 0%, #4aa3a8 100%);
+}
+
 .game-card h2 {
     font-size: 1.75rem;
     color: #121212;
