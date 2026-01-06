@@ -1,14 +1,14 @@
 {
   "theme": "At the Gym",
   "spangram": "CARDIO",
-  "grid": "PSUQATUHLSGUNBERPEAENLPKCRASNDCIORJHUTGECG",
+  "grid": "PSUQATUHPLSGUNBEREPAENLKCSRANCDIORJHUTGNECG",
   "solutions": {
     "PUSHUP": [0, 1, 7, 13, 19, 25],
-    "SQUATS": [2, 8, 3, 9, 15, 14],
-    "LUNGES": [4, 10, 16, 22, 21, 20],
-    "BURPEE": [5, 11, 17, 23, 29, 28],
-    "PLANKS": [6, 12, 18, 24, 30, 31],
-    "CARDIO": [26, 32, 33, 27, 34, 35],
+    "SQUATS": [2, 8, 3, 9, 15, 21],
+    "LUNGES": [4, 10, 16, 22, 28, 29],
+    "BURPEE": [5, 11, 17, 23, 24, 18],
+    "PLANKS": [6, 12, 20, 26, 32, 33],
+    "CARDIO": [27, 34, 35, 14, 30, 31],
     "CRUNCH": [36, 37, 38, 39, 40, 41],
     "JOGGER": [42, 43, 44, 45, 46, 47]
   }

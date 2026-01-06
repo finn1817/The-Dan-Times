@@ -1,15 +1,15 @@
 {
   "theme": "Colors",
   "spangram": "PURPLE",
-  "grid": "ONALEWLEOIRYLLOMGAISOVDNEOITMRPERPNUALSNAIEN",
+  "grid": "ONAGRAWLELOEIYRLLOMGAISOVDNEOITRMEPURNPALSNAI",
   "solutions": {
     "ORANGE": [0, 6, 12, 13, 7, 1],
-    "YELLOW": [2, 8, 3, 9, 15, 14],
-    "INDIGO": [4, 10, 16, 22, 28, 34],
+    "YELLOW": [2, 8, 14, 9, 15, 21],
+    "INDIGO": [3, 4, 10, 16, 22, 28],
     "VIOLET": [5, 11, 17, 23, 29, 35],
-    "PURPLE": [18, 24, 30, 36, 37, 31],
-    "SALMON": [19, 25, 20, 26, 32, 38],
-    "MAROON": [21, 27, 33, 39, 40, 41],
+    "PURPLE": [18, 24, 30, 31, 25, 19],
+    "SALMON": [26, 32, 33, 27, 20, 34],
+    "MAROON": [36, 37, 38, 39, 40, 41],
     "SIENNA": [42, 43, 44, 45, 46, 47]
   }
 }

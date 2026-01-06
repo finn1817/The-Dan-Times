@@ -1,14 +1,14 @@
 {
   "theme": "Fruit Bowl",
   "spangram": "FRUITS",
-  "grid": "OEGRAANNARBAYSAALPPEHCMRSERGNOYFMSOUTILNESR",
+  "grid": "OEGRAANNARBAYSAAPLPEHCMRSERGNOYFMSOUTILNESRR",
   "solutions": {
     "ORANGE": [0, 6, 12, 18, 24, 30],
     "BANANA": [1, 7, 13, 19, 25, 31],
-    "PAPAYA": [2, 8, 3, 9, 15, 14],
-    "APPLES": [4, 10, 16, 22, 21, 20],
-    "CHERRY": [5, 11, 17, 23, 29, 28],
-    "MANGOS": [26, 32, 27, 33, 34, 35],
+    "PAPAYA": [2, 8, 14, 9, 15, 21],
+    "APPLES": [3, 4, 10, 16, 22, 28],
+    "CHERRY": [5, 11, 17, 23, 29, 35],
+    "MANGOS": [26, 32, 33, 27, 20, 34],
     "MELONS": [36, 37, 38, 39, 40, 41],
     "FRUITS": [42, 43, 44, 45, 46, 47]
   }

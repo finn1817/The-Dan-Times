@@ -133,6 +133,7 @@
     <div class="theme-text" id="theme-text">Loading...</div>
     <div class="status-bar">
         <span>Found: <span id="count-found">0</span>/<span id="count-total">0</span></span>
+        <span>Errors: <span id="error-count" style="color: #d32f2f; font-weight: bold;">0</span></span>
         <span>Spangram: <span id="span-status">❌</span></span>
     </div>
 </div>
@@ -167,6 +168,7 @@
     let isDragging = false;
     let totalWords = 0;
     let currentLevelData = null;
+    let errorCount = 0;
 
     const gridEl = document.getElementById('grid');
     const polyline = document.getElementById('drag-polyline');
@@ -280,6 +282,19 @@
         if (validKey && !foundWords.has(validKey)) {
             foundWords.add(validKey);
             finalizeWord(validKey);
+        } else if (currentPath.length >= 3) {
+            // Count as error only if path is long enough to be an attempt
+            errorCount++;
+            document.getElementById('error-count').innerText = errorCount;
+            
+            // Flash red on error
+            currentPath.forEach(idx => {
+                const c = document.querySelector(`.cell[data-idx="${idx}"]`);
+                if(c) {
+                    c.style.backgroundColor = '#ffcdd2';
+                    setTimeout(() => c.style.backgroundColor = '', 300);
+                }
+            });
         }
 
         currentPath = [];

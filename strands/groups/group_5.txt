@@ -1,14 +1,14 @@
 {
   "theme": "Coding",
   "spangram": "CODING",
-  "grid": "PTONJYEHBOCICSRTPBGDOIRTNACINYHUBAFRFETGEV",
+  "grid": "PTONJYEHBOCICSRTPGBDOIRTNACIYNHUBAFRFETGEVRC",
   "solutions": {
     "PYTHON": [0, 6, 12, 18, 24, 30],
     "OBJECT": [1, 7, 13, 19, 25, 31],
-    "SCRIPT": [2, 8, 3, 9, 15, 14],
-    "CODING": [4, 10, 16, 22, 28, 34],
+    "SCRIPT": [2, 8, 14, 9, 15, 21],
+    "CODING": [3, 4, 10, 16, 22, 28],
     "BINARY": [5, 11, 17, 23, 29, 35],
-    "GITHUB": [20, 26, 32, 33, 27, 21],
+    "GITHUB": [20, 26, 32, 33, 27, 34],
     "BUFFER": [36, 37, 38, 39, 40, 41],
     "VECTOR": [42, 43, 44, 45, 46, 47]
   }
