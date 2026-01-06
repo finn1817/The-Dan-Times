@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spelling Bee | The Dan Times</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="game-header">
+            <a href="../index.html" class="back-button">← Back to Games</a>
+            <h1>🐝 Spelling Bee</h1>
+        </header>
+
+        <!-- Game Info -->
+        <div class="game-info">
+            <div class="info-item">
+                <span class="label">Words Found:</span>
+                <span class="value" id="words-found">0</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Score:</span>
+                <span class="value" id="score">0</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Rank:</span>
+                <span class="value rank" id="rank">Beginner</span>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="rank-labels">
+                <span>Beginner</span>
+                <span>Good</span>
+                <span>Great</span>
+                <span>Amazing</span>
+                <span class="genius">Genius!</span>
+            </div>
+        </div>
+
+        <!-- Honeycomb -->
+        <div class="honeycomb-container">
+            <svg viewBox="0 0 300 350" id="honeycomb">
+                <!-- Letters will be inserted here by JS -->
+            </svg>
+        </div>
+
+        <!-- Input Display -->
+        <div class="input-display" id="input-display"></div>
+
+        <!-- Message -->
+        <div class="message" id="message"></div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+            <button class="game-btn delete-btn" id="delete-btn">Delete</button>
+            <button class="game-btn shuffle-btn" id="shuffle-btn">Shuffle</button>
+            <button class="game-btn submit-btn" id="submit-btn">Enter</button>
+        </div>
+
+        <!-- Found Words -->
+        <div class="found-words-section">
+            <button class="toggle-words-btn" id="toggle-words">
+                Show Found Words (<span id="found-count">0</span>)
+            </button>
+            <div class="found-words-list" id="found-words" style="display: none;"></div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>How to Play:</h3>
+            <ul>
+                <li>Create words using the letters</li>
+                <li>Words must be <strong>at least 4 letters</strong></li>
+                <li>Words must include the <strong>center letter (yellow)</strong></li>
+                <li>Letters can be used <strong>more than once</strong></li>
+                <li>Find a "<strong>pangram</strong>" (uses all 7 letters) for bonus points!</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="randomize.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
