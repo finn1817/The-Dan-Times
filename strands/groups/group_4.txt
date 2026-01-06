@@ -1,19 +1,15 @@
 {
   "theme": "At the Gym",
-  "spangram": "WORKOUT",
-  "grid": "YOGALIRUNFTCARDIOHIITSQUATBENCHWORKOUTPLANKPUSHGYM",
+  "spangram": "CARDIO",
+  "grid": "PUSHUPSQUATSLUNGESBURPEEPLANKSCARDIOCRUNCHJOGGER",
   "solutions": {
-    "YOGA": [0, 1, 2, 3],
-    "LIFT": [4, 5, 11, 10],
-    "RUN": [6, 7, 8],
-    "CARDIO": [12, 13, 14, 9, 15, 16],
-    "HIIT": [17, 18, 19, 20],
-    "SQUAT": [21, 22, 23, 29, 28],
-    "BENCH": [24, 25, 26, 27, 33],
-    "WORKOUT": [34, 35, 41, 40, 39, 38, 32],
-    "PLANK": [42, 43, 44, 45, 46],
-    "PUSH": [47, 41, 40, 39],
-    "GYM": [30, 31, 37],
-    "ABS": [36, 37, 38]
+    "PUSHUP": [0, 1, 2, 3, 4, 5],
+    "SQUATS": [6, 7, 8, 9, 10, 11],
+    "LUNGES": [12, 13, 14, 15, 16, 17],
+    "BURPEE": [18, 19, 20, 21, 22, 23],
+    "PLANKS": [24, 25, 26, 27, 28, 29],
+    "CARDIO": [30, 31, 32, 33, 34, 35],
+    "CRUNCH": [36, 37, 38, 39, 40, 41],
+    "JOGGER": [42, 43, 44, 45, 46, 47]
   }
 }
