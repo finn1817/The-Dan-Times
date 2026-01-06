@@ -72,7 +72,6 @@ function startDrag(e) {
     if (foundWords.size === totalWords) return;
     
     isDragging = true;
-    gridEl.setPointerCapture(e.pointerId);
     
     const idx = parseInt(e.target.dataset.idx);
     
