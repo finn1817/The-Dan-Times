@@ -210,6 +210,8 @@
             margin-top: 20px;
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .btn {
             padding: 14px 32px;
@@ -222,6 +224,8 @@
         }
         .btn-check { background-color: var(--btn-black); color: white; }
         .btn-reset { background-color: #ddd; color: #333; }
+        .btn-rotate { background-color: #444; color: #fff; }
+        .btn-next { background-color: #eee; color: #333; }
         .btn:hover { opacity: 0.85; }
 
         .check-mark,.error-x {
@@ -238,6 +242,10 @@
         }
         .check-mark { background: #4caf50; }
         .error-x { background: #d93025; }
+
+        .domino.selected {
+            box-shadow: 0 0 0 3px #000, 0 5px 10px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
@@ -256,22 +264,27 @@
     <div id="tray"></div>
 
     <div id="controls">
+        <button class="btn btn-rotate" id="btn-rotate">Rotate 90°</button>
         <button class="btn btn-reset" onclick="resetGame()">Reset</button>
         <button class="btn btn-check" onclick="checkSolution()">Check</button>
+        <button class="btn btn-next" id="btn-next">Next Puzzle</button>
     </div>
 
 <script>
-    const CELL = 80;
-    const PAD = 4;
+        const CELL = 80;
+        const PAD = 4;
 
-    const BOARD_SHAPE = [
-        {x:0, y:0}, {x:1, y:0}, {x:2, y:0},
-        {x:0, y:1}, {x:1, y:1}, {x:2, y:1},
-                    {x:2, y:2},
-        {x:0, y:3}, {x:1, y:3}, {x:2, y:3}
-    ];
-
-    const REGIONS = [
+        // --- Puzzle definitions ---
+        const PUZZLES = [
+            {
+                name: 'Stair Intro',
+                boardShape: [
+                    {x:0, y:0}, {x:1, y:0}, {x:2, y:0},
+                    {x:0, y:1}, {x:1, y:1}, {x:2, y:1},
+                                            {x:2, y:2},
+                    {x:0, y:3}, {x:1, y:3}, {x:2, y:3}
+                ],
+                regions: [
         {
             id: 'purple',
             colorClass: 'reg-purple',
@@ -306,32 +319,114 @@
             cells: [{x:1, y:3}, {x:2, y:3}],
             rule: { type: 'sum', val: 11 },
             tag: { type: 'pentagon', color: '#112e51', text: '11', pos: {x: 130, y: 50} }
-        }
-    ];
+                }
+                ],
+                slots: [
+                    { id: 's1', c1: {x:0, y:0}, c2: {x:0, y:1}, orient: 'v' },
+                    { id: 's2', c1: {x:1, y:0}, c2: {x:1, y:1}, orient: 'v' },
+                    { id: 's3', c1: {x:2, y:0}, c2: {x:2, y:1}, orient: 'v' },
+                    { id: 's4', c1: {x:2, y:2}, c2: {x:2, y:3}, orient: 'v' },
+                    { id: 's5', c1: {x:0, y:3}, c2: {x:1, y:3}, orient: 'h' }
+                ],
+                dominoes: [
+                    { id: 'd1', v1: 6, v2: 6 },
+                    { id: 'd2', v1: 1, v2: 5 },
+                    { id: 'd3', v1: 6, v2: 4 },
+                    { id: 'd4', v1: 6, v2: 2 },
+                    { id: 'd5', v1: 2, v2: 0 }
+                ]
+            },
+            {
+                name: 'Corner Path',
+                boardShape: [
+                    {x:0,y:0},{x:1,y:0},{x:2,y:0},
+                    {x:0,y:1},                {x:3,y:1},
+                    {x:0,y:2},{x:1,y:2},{x:2,y:2},{x:3,y:2}
+                ],
+                regions: [
+                    {
+                        id: 'corner-purple',
+                        colorClass: 'reg-purple',
+                        cells: [{x:0,y:0},{x:1,y:0}],
+                        rule: { type: 'sum', val: 7 },
+                        tag: { type: 'diamond', color: '#8e5c9b', text: '7', pos: {x: 40, y: 40} }
+                    },
+                    {
+                        id: 'corner-orange',
+                        colorClass: 'reg-orange',
+                        cells: [{x:2,y:0},{x:3,y:1},{x:3,y:2}],
+                        rule: { type: 'sum', val: 12 },
+                        tag: { type: 'round', color: '#d95e00', text: '12', pos: {x: 120, y: 20} }
+                    },
+                    {
+                        id: 'corner-blue',
+                        colorClass: 'reg-blue',
+                        cells: [{x:0,y:2},{x:1,y:2},{x:2,y:2}],
+                        rule: { type: 'sum', val: 10 },
+                        tag: { type: 'pentagon', color: '#112e51', text: '10', pos: {x: 80, y: 40} }
+                    }
+                ],
+                slots: [
+                    { id: 'c1', c1:{x:0,y:0}, c2:{x:1,y:0}, orient:'h' },
+                    { id: 'c2', c1:{x:2,y:0}, c2:{x:3,y:1}, orient:'v' },
+                    { id: 'c3', c1:{x:3,y:1}, c2:{x:3,y:2}, orient:'v' },
+                    { id: 'c4', c1:{x:0,y:2}, c2:{x:1,y:2}, orient:'h' },
+                    { id: 'c5', c1:{x:1,y:2}, c2:{x:2,y:2}, orient:'h' }
+                ],
+                dominoes: [
+                    { id: 'p1', v1: 4, v2: 3 },
+                    { id: 'p2', v1: 6, v2: 1 },
+                    { id: 'p3', v1: 5, v2: 5 },
+                    { id: 'p4', v1: 2, v2: 4 },
+                    { id: 'p5', v1: 0, v2: 2 }
+                ]
+            }
+        ];
 
-    const SLOTS = [
-        { id: 's1', c1: {x:0, y:0}, c2: {x:0, y:1}, orient: 'v' },
-        { id: 's2', c1: {x:1, y:0}, c2: {x:1, y:1}, orient: 'v' },
-        { id: 's3', c1: {x:2, y:0}, c2: {x:2, y:1}, orient: 'v' },
-        { id: 's4', c1: {x:2, y:2}, c2: {x:2, y:3}, orient: 'v' },
-        { id: 's5', c1: {x:0, y:3}, c2: {x:1, y:3}, orient: 'h' }
-    ];
+        let BOARD_SHAPE = [];
+        let REGIONS = [];
+        let SLOTS = [];
+        let DOMINOES = [];
 
-    const DOMINOES = [
-        { id: 'd1', v1: 6, v2: 6 },
-        { id: 'd2', v1: 1, v2: 5 },
-        { id: 'd3', v1: 6, v2: 4 },
-        { id: 'd4', v1: 6, v2: 2 },
-        { id: 'd5', v1: 2, v2: 0 }
-    ];
+        let placedDominoes = {};
+        let currentPuzzleIndex = 0;
+        let selectedTrayDominoId = null;
 
-    let placedDominoes = {};
+    function loadPuzzle(index) {
+        currentPuzzleIndex = (index + PUZZLES.length) % PUZZLES.length;
+        const p = PUZZLES[currentPuzzleIndex];
+        BOARD_SHAPE = p.boardShape;
+        REGIONS = p.regions;
+        SLOTS = p.slots;
+        DOMINOES = p.dominoes;
+        placedDominoes = {};
+        selectedTrayDominoId = null;
 
-    function init() {
+        document.getElementById('board-bg-layer').innerHTML = '';
+        document.getElementById('regions-layer').innerHTML = '';
+        document.getElementById('tags-layer').innerHTML = '';
+        document.getElementById('slots-layer').innerHTML = '';
+        document.getElementById('feedback-layer').innerHTML = '';
+
         renderBoardBg();
         renderRegions();
         renderSlots();
         renderTray();
+        clearFeedback();
+    }
+
+    function init() {
+        loadPuzzle(0);
+        document.getElementById('btn-next').addEventListener('click', () => {
+            loadPuzzle(currentPuzzleIndex + 1);
+        });
+        document.getElementById('btn-rotate').addEventListener('click', () => {
+            if (!selectedTrayDominoId) return;
+            const el = document.getElementById(selectedTrayDominoId);
+            if (!el) return;
+            const newOrient = el.dataset.orient === 'v' ? 'h' : 'v';
+            el.dataset.orient = newOrient;
+        });
     }
 
     function renderBoardBg() {
@@ -453,13 +548,13 @@
 
             el.addEventListener('dragstart', e => {
                 e.dataTransfer.setData('domId', d.id);
+                selectedTrayDominoId = d.id;
             });
 
             el.addEventListener('click', () => {
-               const t = el.dataset.v1;
-               el.dataset.v1 = el.dataset.v2;
-               el.dataset.v2 = t;
-               el.innerHTML = createDominoHTML(el.dataset.v1, el.dataset.v2);
+                document.querySelectorAll('#tray .domino').forEach(dom => dom.classList.remove('selected'));
+                el.classList.add('selected');
+                selectedTrayDominoId = el.id;
             });
 
             tray.appendChild(el);
