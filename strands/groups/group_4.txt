@@ -1,0 +1,16 @@
+{
+  "theme": "Rainbow Connection",
+  "spangram": "SPECTRUM",
+  "grid": "REDORAINDIGNGEYELVIOLELOWGRTEULBEESPECTRUMNKIPSA",
+  "solutions": {
+    "RED": [0, 1, 2],
+    "ORANGE": [3, 4, 5, 11, 10, 9],
+    "INDIGO": [6, 7, 8, 14, 15, 21],
+    "YELLOW": [12, 13, 19, 20, 26, 25],
+    "VIOLET": [16, 17, 23, 22, 28, 29],
+    "GREEN": [24, 30, 31, 37, 36],
+    "BLUE": [32, 33, 39, 38],
+    "PINK": [44, 45, 46, 47],
+    "SPECTRUM": [34, 35, 41, 40, 42, 43, 48]
+  }
+}

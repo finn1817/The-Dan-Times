@@ -1,0 +1,16 @@
+{
+  "theme": "Fruit Salad",
+  "spangram": "FRESHFRUIT",
+  "grid": "GRAPEEBANANAROYMANCHERRYEWKIWIFRESHSNOLEMOPUTLIERAT",
+  "solutions": {
+    "GRAPE": [0, 1, 2, 3, 4],
+    "BANANA": [5, 6, 7, 8, 9, 10],
+    "CHERRY": [17, 16, 15, 14, 13, 12],
+    "MANGO": [11, 18, 19, 20, 26],
+    "KIWI": [22, 21, 27, 28],
+    "LEMON": [34, 33, 32, 38, 39],
+    "PEAR": [46, 47, 41, 40],
+    "MELON": [39, 45, 44, 43, 37],
+    "FRESHFRUIT": [23, 29, 35, 42, 36, 30, 24, 25, 31, 41]
+  }
+}
