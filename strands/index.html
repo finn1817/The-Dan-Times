@@ -190,8 +190,20 @@
     function setupLevel(data) {
         currentLevelData = data;
         document.getElementById('theme-text').innerText = data.theme;
-        gridLetters = data.grid;
-        wordMap = data.solutions; 
+        
+        // Build a fresh scrambled layout from the word list
+        let wordsList = null;
+        if (Array.isArray(data.words) && data.words.length > 0) {
+            wordsList = data.words.slice();
+        } else if (data.solutions) {
+            wordsList = Object.keys(data.solutions);
+        } else {
+            wordsList = [];
+        }
+
+        const generated = generateGridFromWords(wordsList);
+        gridLetters = generated.grid;
+        wordMap = generated.solutions;
         totalWords = Object.keys(wordMap).length;
         document.getElementById('count-total').innerText = totalWords;
         
@@ -280,6 +292,66 @@
         return false;
     }
 
+    // Randomize and generate a valid, fully-used board from words
+    function generateGridFromWords(words) {
+        const targetCells = COLS * ROWS;
+        const totalLetters = words.reduce((sum, w) => sum + w.length, 0);
+
+        // If counts don't match exactly, fall back to simple row layout
+        if (totalLetters !== targetCells) {
+            return simpleRowLayout(words, targetCells);
+        }
+
+        for (let attempt = 0; attempt < 40; attempt++) {
+            const used = new Set();
+            const tempSolutions = {};
+            const gridArr = new Array(targetCells);
+
+            const shuffledWords = shuffleArray(words.slice());
+            let ok = true;
+
+            for (const word of shuffledWords) {
+                const path = findPathForWord(word.length, used);
+                if (!path) { ok = false; break; }
+
+                const finalPath = Math.random() < 0.5 ? path.slice().reverse() : path;
+                tempSolutions[word] = finalPath;
+
+                for (let i = 0; i < finalPath.length; i++) {
+                    const idx = finalPath[i];
+                    used.add(idx);
+                    gridArr[idx] = word[i];
+                }
+            }
+
+            if (ok) {
+                const orderedSolutions = {};
+                words.forEach(w => { orderedSolutions[w] = tempSolutions[w]; });
+                return { grid: gridArr.join(''), solutions: orderedSolutions };
+            }
+        }
+
+        // As a safety net, still produce a playable (but row-like) layout
+        return simpleRowLayout(words, targetCells);
+    }
+
+    function simpleRowLayout(words, targetCells) {
+        let grid = "";
+        const solutions = {};
+        let idx = 0;
+        for (const word of words) {
+            const indices = [];
+            for (const ch of word) {
+                if (idx >= targetCells) break;
+                grid += ch;
+                indices.push(idx++);
+            }
+            solutions[word] = indices;
+        }
+        while (grid.length < targetCells) grid += 'X';
+        return { grid, solutions };
+    }
+
     function updateVisuals() {
         document.querySelectorAll('.cell').forEach(c => {
             const idx = parseInt(c.dataset.idx);
@@ -300,6 +372,62 @@
         const rect = cell.getBoundingClientRect();
         const containerRect = document.getElementById('game-container').getBoundingClientRect();
         return `${rect.left + rect.width/2 - containerRect.left},${rect.top + rect.height/2 - containerRect.top}`;
+    }
+
+    function getNeighbors(idx) {
+        const neighbors = [];
+        const r = Math.floor(idx / COLS);
+        const c = idx % COLS;
+        for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+                if (dr === 0 && dc === 0) continue;
+                const nr = r + dr;
+                const nc = c + dc;
+                if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+                    neighbors.push(nr * COLS + nc);
+                }
+            }
+        }
+        return neighbors;
+    }
+
+    function findPathForWord(length, used) {
+        const allIndices = [];
+        for (let i = 0; i < COLS * ROWS; i++) {
+            if (!used.has(i)) allIndices.push(i);
+        }
+        const starts = shuffleArray(allIndices);
+
+        for (const start of starts) {
+            const path = [start];
+            const visited = new Set([start]);
+            if (dfsExtend(path, visited, length, used)) return path;
+        }
+        return null;
+    }
+
+    function dfsExtend(path, visited, targetLen, used) {
+        if (path.length === targetLen) return true;
+        const last = path[path.length - 1];
+        let neighbors = getNeighbors(last).filter(n => !used.has(n) && !visited.has(n));
+        neighbors = shuffleArray(neighbors);
+
+        for (const n of neighbors) {
+            visited.add(n);
+            path.push(n);
+            if (dfsExtend(path, visited, targetLen, used)) return true;
+            path.pop();
+            visited.delete(n);
+        }
+        return false;
+    }
+
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
     }
 
     function finalizeWord(word) {
