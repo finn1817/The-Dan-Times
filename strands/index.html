@@ -15,11 +15,12 @@
             --theme-blue-text: #1c3a5e;
             --spangram-yellow: #fcf4db;
             --spangram-yellow-text: #b59f3b;
-            --selection-color: #dcdcdc; /* The grey line color */
+            --selection-color: #dcdcdc; 
             --font-serif: 'Karnak Pro', serif;
             --font-sans: 'Franklin Gothic', sans-serif;
         }
 
+        /* DISABLE SCROLLING ON MOBILE */
         * { box-sizing: border-box; touch-action: none; user-select: none; -webkit-user-select: none; }
 
         body {
@@ -64,7 +65,7 @@
             grid-template-rows: repeat(8, var(--letter-size));
             gap: var(--grid-gap);
             position: relative;
-            z-index: 2;
+            z-index: 2; /* Letters sit above lines */
         }
 
         .cell {
@@ -80,15 +81,14 @@
             border-radius: 50%;
             transition: transform 0.1s;
             background-color: transparent;
-            z-index: 2; /* Text sits above line */
         }
 
-        /* SVG Line Layer (Sits behind text, but can be above bg) */
+        /* SVG Line Layer - MUST BE POINTER EVENTS NONE */
         #line-layer {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            pointer-events: none;
+            pointer-events: none; /* Crucial for drag to work */
             z-index: 1; 
             overflow: visible;
         }
@@ -96,7 +96,7 @@
         /* The Dynamic Line */
         .connector-line {
             fill: none;
-            stroke-width: 12; /* Thick line */
+            stroke-width: 12; 
             stroke-linecap: round;
             stroke-linejoin: round;
             opacity: 0.8;
@@ -134,7 +134,7 @@
 <header>
     <div style="font-weight:bold; font-size:1.2rem;">☰</div>
     <h1>Strands</h1>
-    <div class="date" id="date-display">Today</div>
+    <div class="date" id="date-display">Daily</div>
 </header>
 
 <div id="game-info">
@@ -162,10 +162,304 @@
 <div id="modal">
     <h2 style="font-family: var(--font-serif); font-size: 2rem;">Puzzle Solved!</h2>
     <div id="word-list"></div>
-    <button onclick="location.reload()" style="background:#000; color:#fff; border:none;">Play Next Level</button>
+    <button onclick="location.reload()" style="background:#000; color:#fff; border:none; padding: 15px 30px; border-radius:30px; margin-top:20px; cursor:pointer;">Play Next Level</button>
 </div>
 
-<script src="js/functions.js"></script>
+<script>
+    /**
+     * STRANDS GAME ENGINE
+     * Single Inline Version
+     */
+
+    // --- CONFIG & STATE ---
+    const COLS = 6;
+    const ROWS = 8;
+    
+    let gridLetters = "";
+    let wordMap = {};      // "WORD" -> [indices]
+    let foundWords = new Set();
+    let currentPath = [];  // Array of indices being dragged
+    let isDragging = false;
+    let totalWords = 0;
+    let currentLevelData = null; // Stores full JSON
+
+    // DOM Elements
+    const gridEl = document.getElementById('grid');
+    const polyline = document.getElementById('drag-polyline');
+    const foundLinesGroup = document.getElementById('found-lines');
+
+    // --- INITIALIZATION ---
+    async function initGame() {
+        // Randomly pick group 1-5
+        const groupId = Math.floor(Math.random() * 5) + 1;
+        console.log(`Loading Group ${groupId}`);
+
+        try {
+            // NOTE: This assumes 'groups' folder is next to index.html
+            const response = await fetch(`groups/group_${groupId}.txt`);
+            if (!response.ok) throw new Error("Failed to load level file");
+            
+            const data = await response.json();
+            setupLevel(data);
+        } catch (e) {
+            console.error(e);
+            document.getElementById('theme-text').innerText = "Error: Create groups/group_1.txt first!";
+            document.getElementById('theme-text').style.color = "red";
+        }
+    }
+
+    function setupLevel(data) {
+        currentLevelData = data;
+        document.getElementById('theme-text').innerText = data.theme;
+        gridLetters = data.grid;
+        wordMap = data.solutions; 
+        
+        totalWords = Object.keys(wordMap).length;
+        document.getElementById('count-total').innerText = totalWords;
+        
+        // Build Grid
+        gridEl.innerHTML = '';
+        for (let i = 0; i < gridLetters.length; i++) {
+            const d = document.createElement('div');
+            d.className = 'cell';
+            d.innerText = gridLetters[i];
+            d.dataset.idx = i;
+            gridEl.appendChild(d);
+        }
+
+        // --- ATTACH INPUT LISTENERS (The Fix for Dragging) ---
+        // We attach these to the document/body to ensure we catch fast movements
+        
+        // Start Drag
+        document.addEventListener('pointerdown', startDrag);
+        
+        // Move Drag
+        document.addEventListener('pointermove', handleMove);
+        
+        // End Drag
+        document.addEventListener('pointerup', endDrag);
+    }
+
+
+    // --- INTERACTION LOGIC ---
+
+    function startDrag(e) {
+        // Did we touch a cell?
+        const cell = e.target.closest('.cell');
+        if (!cell) return;
+        
+        if (foundWords.size === totalWords) return;
+        
+        // Stop default browser stuff
+        // e.preventDefault(); // (Careful, this might block click events on buttons if too aggressive)
+        
+        isDragging = true;
+        const idx = parseInt(cell.dataset.idx);
+
+        // Only start if not already found
+        if (!isCellFound(idx)) {
+            currentPath = [idx];
+            updateVisuals();
+        }
+    }
+
+    function handleMove(e) {
+        if (!isDragging) return;
+
+        // KEY FIX: Use elementFromPoint to find what is under finger
+        // This works even if the mouse is "captured" by the first element
+        const target = document.elementFromPoint(e.clientX, e.clientY);
+        if (!target) return;
+
+        const cell = target.closest('.cell');
+        if (!cell) return;
+
+        const idx = parseInt(cell.dataset.idx);
+        const lastIdx = currentPath[currentPath.length - 1];
+
+        if (lastIdx === undefined) return;
+
+        // 1. If we went back to the previous cell, BACKTRACK
+        if (currentPath.length > 1 && idx === currentPath[currentPath.length - 2]) {
+            currentPath.pop();
+            updateVisuals();
+            return;
+        }
+
+        // 2. Add New Cell (If valid neighbor)
+        // Rules: Adjacent, Not in path yet, Not a found word
+        if (idx !== lastIdx && 
+            !currentPath.includes(idx) && 
+            isAdjacent(lastIdx, idx) && 
+            !isCellFound(idx)) {
+            
+            currentPath.push(idx);
+            updateVisuals();
+        }
+    }
+
+    function endDrag(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        // Validate Word
+        const formedWord = currentPath.map(i => gridLetters[i]).join("");
+        const reversedWord = formedWord.split('').reverse().join('');
+        
+        let validKey = null;
+        if (wordMap[formedWord]) validKey = formedWord;
+        else if (wordMap[reversedWord]) validKey = reversedWord;
+
+        if (validKey && !foundWords.has(validKey)) {
+            foundWords.add(validKey);
+            finalizeWord(validKey);
+        }
+
+        // Reset
+        currentPath = [];
+        updateVisuals();
+    }
+
+
+    // --- HELPERS ---
+
+    function isAdjacent(i1, i2) {
+        const r1 = Math.floor(i1 / COLS);
+        const c1 = i1 % COLS;
+        const r2 = Math.floor(i2 / COLS);
+        const c2 = i2 % COLS;
+        const rDiff = Math.abs(r1 - r2);
+        const cDiff = Math.abs(c1 - c2);
+        
+        // Neighbors including diagonals, but not same cell
+        return (rDiff <= 1 && cDiff <= 1) && !(rDiff === 0 && cDiff === 0);
+    }
+
+    function isCellFound(idx) {
+        for (let w of foundWords) {
+            if (wordMap[w].includes(idx)) return true;
+        }
+        return false;
+    }
+
+    // --- VISUALS ---
+
+    function updateVisuals() {
+        // 1. Highlight Cells
+        document.querySelectorAll('.cell').forEach(c => {
+            const idx = parseInt(c.dataset.idx);
+            if (currentPath.includes(idx)) c.classList.add('selected');
+            else c.classList.remove('selected');
+        });
+
+        // 2. Update SVG Drag Line
+        if (currentPath.length < 2) {
+            polyline.setAttribute('points', '');
+            return;
+        }
+
+        const points = currentPath.map(idx => getCenterCoord(idx)).join(" ");
+        polyline.setAttribute('points', points);
+    }
+
+    function getCenterCoord(idx) {
+        const cell = document.querySelector(`.cell[data-idx="${idx}"]`);
+        if (!cell) return "0,0";
+        const rect = cell.getBoundingClientRect();
+        const containerRect = document.getElementById('game-container').getBoundingClientRect();
+        
+        const x = rect.left + rect.width / 2 - containerRect.left;
+        const y = rect.top + rect.height / 2 - containerRect.top;
+        return `${x},${y}`;
+    }
+
+    function finalizeWord(word) {
+        const indices = wordMap[word];
+        const isSpangram = (word === currentLevelData.spangram);
+        
+        // Colors
+        const cellClass = isSpangram ? 'found-spangram' : 'found-word';
+        const strokeColor = isSpangram ? '#b59f3b' : '#1c3a5e'; // Dark yellow or Dark blue
+        const strokeOpacity = 0.4;
+
+        // 1. Mark Cells
+        indices.forEach(idx => {
+            const c = document.querySelector(`.cell[data-idx="${idx}"]`);
+            if(c) {
+                c.classList.remove('selected');
+                c.classList.add(cellClass);
+            }
+        });
+
+        // 2. Add Permanent Line
+        // We need to ensure the points are drawn in visual order. 
+        // If the user just dragged it, currentPath is perfect. 
+        // If we are loading from data (future), indices array is used.
+        // We prefer currentPath if lengths match because it preserves drag direction.
+        const pathIndices = (currentPath.length === indices.length) ? currentPath : indices;
+        
+        const points = pathIndices.map(idx => getCenterCoord(idx)).join(" ");
+        const newLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        newLine.setAttribute('points', points);
+        newLine.setAttribute('class', 'connector-line');
+        newLine.style.stroke = strokeColor;
+        newLine.style.opacity = strokeOpacity;
+        
+        foundLinesGroup.appendChild(newLine);
+
+        // 3. Update UI
+        document.getElementById('count-found').innerText = foundWords.size;
+        if(isSpangram) {
+            const spanEl = document.getElementById('span-status');
+            spanEl.innerText = word;
+            spanEl.style.color = "#b59f3b";
+            spanEl.style.fontWeight = "bold";
+        }
+
+        checkWin();
+    }
+
+    function checkWin() {
+        if (foundWords.size === totalWords) {
+            setTimeout(() => {
+                let html = "";
+                // Show Spangram first
+                if (currentLevelData.spangram) {
+                    html += `<div style="color:#b59f3b; font-weight:bold; font-size:1.3rem; margin-bottom:15px;">${currentLevelData.spangram}</div>`;
+                }
+                
+                // Show other words
+                foundWords.forEach(w => {
+                    if (w !== currentLevelData.spangram) {
+                        html += `<div>${w}</div>`;
+                    }
+                });
+                
+                document.getElementById('word-list').innerHTML = html;
+                document.getElementById('modal').style.display = 'flex';
+            }, 500);
+        }
+    }
+
+    function hint() {
+        const all = Object.keys(wordMap);
+        const missing = all.find(w => !foundWords.has(w));
+        
+        if (missing) {
+            const idx = wordMap[missing][0];
+            const cell = document.querySelector(`.cell[data-idx="${idx}"]`);
+            if (cell) {
+                cell.style.transition = "background 0.5s";
+                cell.style.backgroundColor = "pink";
+                setTimeout(() => cell.style.backgroundColor = "", 1000);
+            }
+        }
+    }
+
+    // Start
+    initGame();
+
+</script>
 
 </body>
 </html>
