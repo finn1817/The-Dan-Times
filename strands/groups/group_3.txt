@@ -1,15 +1,17 @@
 {
-  "theme": "Morning Brew",
-  "spangram": "CAFFEINE",
-  "grid": "LATTEMOCHABESPRESSOAEKREANRGUSARSTCAFFEINEROATSD",
+  "theme": "Coding",
+  "spangram": "FULLSTACK",
+  "grid": "HTMLCSJAVASCPYTHONRUBYREACTNODESQLFULLSTACKCODEX",
   "solutions": {
-    "LATTE": [0, 1, 2, 3, 4],
-    "MOCHA": [5, 6, 7, 8, 9],
-    "ESPRESSO": [11, 12, 13, 14, 15, 16, 17, 23],
-    "BEAN": [10, 18, 19, 20],
-    "SUGAR": [28, 27, 26, 25, 24],
-    "ROAST": [42, 43, 44, 45, 46],
-    "DARK": [47, 46, 40, 41],
-    "CAFFEINE": [36, 37, 31, 32, 33, 34, 35, 29]
+    "HTML": [0, 1, 2, 3],
+    "CSS": [4, 5, 11],
+    "JAVASCRIPT": [6, 7, 8, 9, 10, 16, 15, 14, 13, 12],
+    "PYTHON": [17, 18, 19, 20, 21, 22],
+    "RUBY": [23, 29, 28, 27],
+    "REACT": [24, 25, 26, 32, 31],
+    "NODE": [33, 34, 35, 29],
+    "SQL": [30, 36, 37],
+    "FULLSTACK": [38, 39, 40, 41, 47, 46, 45, 44, 43],
+    "CODE": [42, 36, 30, 24] 
   }
 }

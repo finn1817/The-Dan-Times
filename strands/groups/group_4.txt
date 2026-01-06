@@ -1,16 +1,17 @@
 {
-  "theme": "Rainbow Connection",
-  "spangram": "SPECTRUM",
-  "grid": "REDORAINDIGNGEYELVIOLELOWGRTEULBEESPECTRUMNKIPSA",
+  "theme": "At the Gym",
+  "spangram": "WORKOUT",
+  "grid": "YOGARUNLIFTSSQUATBENCHCARDIOHIITWORKOUTPLANKPUSH",
   "solutions": {
-    "RED": [0, 1, 2],
-    "ORANGE": [3, 4, 5, 11, 10, 9],
-    "INDIGO": [6, 7, 8, 14, 15, 21],
-    "YELLOW": [12, 13, 19, 20, 26, 25],
-    "VIOLET": [16, 17, 23, 22, 28, 29],
-    "GREEN": [24, 30, 31, 37, 36],
-    "BLUE": [32, 33, 39, 38],
-    "PINK": [44, 45, 46, 47],
-    "SPECTRUM": [34, 35, 41, 40, 42, 43, 48]
+    "YOGA": [0, 1, 2, 3],
+    "RUN": [4, 5, 11],
+    "LIFTS": [6, 7, 8, 9, 10],
+    "SQUAT": [12, 13, 14, 15, 16],
+    "BENCH": [17, 18, 19, 20, 21],
+    "CARDIO": [22, 23, 29, 28, 27, 26],
+    "HIIT": [24, 25, 31, 30],
+    "WORKOUT": [32, 33, 34, 35, 36, 37, 38],
+    "PLANK": [39, 40, 41, 47, 46],
+    "PUSH": [42, 43, 44, 45]
   }
 }

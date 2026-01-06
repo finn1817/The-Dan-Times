@@ -1,16 +1,17 @@
 {
   "theme": "Fruit Salad",
-  "spangram": "FRESHFRUIT",
-  "grid": "GRAPEEBANANAROYMANCHERRYEWKIWIFRESHSNOLEMOPUTLIERAT",
+  "spangram": "FRUITSALAD",
+  "grid": "KIWIMOGNANELPARGAPPEFRUITSALADLOMERYCHABRREYPEAR",
   "solutions": {
-    "GRAPE": [0, 1, 2, 3, 4],
-    "BANANA": [5, 6, 7, 8, 9, 10],
-    "CHERRY": [17, 16, 15, 14, 13, 12],
-    "MANGO": [11, 18, 19, 20, 26],
-    "KIWI": [22, 21, 27, 28],
-    "LEMON": [34, 33, 32, 38, 39],
-    "PEAR": [46, 47, 41, 40],
-    "MELON": [39, 45, 44, 43, 37],
-    "FRESHFRUIT": [23, 29, 35, 42, 36, 30, 24, 25, 31, 41]
+    "MANGO": [5, 4, 3, 10, 11],
+    "KIWI": [0, 1, 2, 8],
+    "ORANGE": [6, 12, 13, 7, 1, 2], 
+    "APPLE": [17, 16, 15, 14, 9],
+    "FRUITSALAD": [18, 19, 20, 21, 22, 23, 29, 28, 27, 26],
+    "GRAPE": [15, 14, 8, 7, 13], 
+    "MELON": [30, 31, 32, 38, 39],
+    "PEACH": [40, 41, 35, 34, 33],
+    "BERRY": [42, 43, 37, 36, 42], 
+    "PEAR": [47, 46, 45, 44]
   }
 }
